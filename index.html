@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>猜数字 · 1 到 100</title>
+  <title>猜数字 · 1 到 10000</title>
   <style>
     :root {
       --bg: #0f1419;
@@ -54,7 +54,7 @@
       align-items: center;
     }
     input[type="number"] {
-      width: 5rem;
+      width: 7.5rem;
       padding: 0.65rem 0.75rem;
       font-size: 1.1rem;
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -106,14 +106,14 @@
 <body>
   <div class="card">
     <h1>猜数字</h1>
-    <p class="sub">我心里想了一个 <strong>1 到 100</strong> 之间的整数，猜猜看？</p>
+    <p class="sub">我心里想了一个 <strong>1 到 10000</strong> 之间的整数，猜猜看？</p>
     <div class="row">
       <input
         type="number"
         id="guess"
         min="1"
-        max="100"
-        placeholder="1–100"
+        max="10000"
+        placeholder="1–10000"
         aria-label="输入猜测的数字"
       />
       <button type="button" id="submit">猜一下</button>
@@ -124,7 +124,7 @@
   </div>
   <script>
     const MIN = 1;
-    const MAX = 100;
+    const MAX = 10000;
 
     let secret = randomSecret();
     let count = 0;
