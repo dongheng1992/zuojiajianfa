@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>猜数字 · 1 到 10</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --text: #e8eef4;
+      --muted: #8b9cb3;
+      --accent: #3d9eff;
+      --win: #34d399;
+      --lose-hint: #fbbf24;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #1e3a5f 0%, var(--bg) 55%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 2rem 2.25rem;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    input[type="number"] {
+      width: 5rem;
+      padding: 0.65rem 0.75rem;
+      font-size: 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--text);
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    button {
+      padding: 0.65rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+    }
+    button:hover {
+      filter: brightness(1.08);
+    }
+    button.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+    #message {
+      margin-top: 1.25rem;
+      min-height: 3rem;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+    #message.win {
+      color: var(--win);
+    }
+    #message.hint {
+      color: var(--lose-hint);
+    }
+    .attempts {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>猜数字</h1>
+    <p class="sub">我心里想了一个 <strong>1 到 10</strong> 之间的整数，猜猜看？</p>
+    <div class="row">
+      <input
+        type="number"
+        id="guess"
+        min="1"
+        max="10"
+        placeholder="1–10"
+        aria-label="输入猜测的数字"
+      />
+      <button type="button" id="submit">猜一下</button>
+      <button type="button" id="restart" class="secondary">重来</button>
+    </div>
+    <p id="message" role="status"></p>
+    <p class="attempts" id="attempts"></p>
+  </div>
+  <script>
+    const MIN = 1;
+    const MAX = 10;
+
+    let secret = randomSecret();
+    let count = 0;
+
+    const guessInput = document.getElementById("guess");
+    const submitBtn = document.getElementById("submit");
+    const restartBtn = document.getElementById("restart");
+    const messageEl = document.getElementById("message");
+    const attemptsEl = document.getElementById("attempts");
+
+    function randomSecret() {
+      return Math.floor(Math.random() * (MAX - MIN + 1)) + MIN;
+    }
+
+    function setMessage(text, className = "") {
+      messageEl.textContent = text;
+      messageEl.className = className;
+    }
+
+    function updateAttempts() {
+      attemptsEl.textContent = count > 0 ? `已猜 ${count} 次` : "";
+    }
+
+    function play() {
+      const raw = guessInput.value.trim();
+      const n = parseInt(raw, 10);
+
+      if (Number.isNaN(n) || n < MIN || n > MAX) {
+        setMessage(`请输入 ${MIN} 到 ${MAX} 之间的整数。`, "hint");
+        return;
+      }
+
+      count += 1;
+      updateAttempts();
+
+      if (n === secret) {
+        setMessage(`猜对了！答案就是 ${secret}。`, "win");
+        submitBtn.disabled = true;
+        return;
+      }
+
+      if (n < secret) {
+        setMessage("太小了，再大一点。", "hint");
+      } else {
+        setMessage("太大了，再小一点。", "hint");
+      }
+    }
+
+    function reset() {
+      secret = randomSecret();
+      count = 0;
+      guessInput.value = "";
+      setMessage("");
+      submitBtn.disabled = false;
+      updateAttempts();
+      guessInput.focus();
+    }
+
+    submitBtn.addEventListener("click", play);
+    restartBtn.addEventListener("click", reset);
+    guessInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") play();
+    });
+
+    guessInput.focus();
+  </script>
+</body>
+</html>
